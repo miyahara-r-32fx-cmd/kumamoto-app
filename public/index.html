@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <!-- スマホでも綺麗に表示するための設定 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  
+  <!-- 地図ライブラリ Leaflet のCSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  
+  <!-- ★ここが書き換えた部分：自分のCSSファイルを読み込む -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="app-container">
+    <header class="header">
+      <div class="header-logo">
+        <h1>🚲 熊本市 自転車危険マップ</h1>
+        <p>〜みんなでつくる安全な通学・サイクリングのために〜</p>
+      </div>
+      <nav class="header-nav">
+        <button class="tab-btn active" data-target="map-tab">マップ</button>
+        <button class="tab-btn" data-target="rule-tab">交通ルール</button>
+        <button class="tab-btn" data-target="quiz-tab">クイズ</button>
+      </nav>
+    </header>
+
+    <main class="main-content">
+      <!-- マップ タブ -->
+      <section id="map-tab" class="tab-section active-display active-animate">
+        <div class="map-layout">
+          <div class="sidebar-left">
+            <h3>危険箇所を投稿</h3>
+            <div id="post-form-area" class="post-form hidden">
+              <label>危険の種類</label>
+              <select id="danger-type">
+                <option value="事故多発地点">事故多発地点</option>
+                <option value="見通しが悪い">見通しが悪い</option>
+              </select>
+              <label>詳細・理由</label>
+              <textarea id="danger-desc" rows="3"></textarea>
+              <button id="btn-submit" class="primary-btn">ピンを立てる</button>
+              <button id="btn-cancel" class="secondary-btn">キャンセル</button>
+            </div>
+            <p id="post-guide">マップ上の危険だと思う場所をクリックしてください。</p>
+          </div>
+          <div class="map-center"><div id="map"></div></div>
+          <div class="sidebar-right">
+            <h3>地点の詳細</h3>
+            <div id="point-detail-area">
+              <p class="placeholder-text">ピンをクリックすると詳細が表示されます。</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- 交通ルール タブ -->
+      <section id="rule-tab" class="tab-section">
+        <div class="content-wrapper">
+          <h2>知っておきたい交通ルール</h2>
+          <p>自転車は原則「車道の左側」を通行するなど、安全なルールを守りましょう。</p>
+        </div>
+      </section>
+
+      <!-- クイズ タブ -->
+      <section id="quiz-tab" class="tab-section">
+        <div class="content-wrapper">
+          <h2>交通安全クイズに挑戦！</h2>
+          <div id="quiz-container" class="quiz-box">
+            <p id="quiz-question" class="quiz-question">問題文がここに表示されます</p>
+            <div id="quiz-choices" class="quiz-choices"></div>
+            <div id="quiz-result" class="quiz-result hidden">
+              <h3 id="quiz-judgement"></h3>
+              <p id="quiz-explanation"></p>
+              <button id="btn-next-quiz" class="primary-btn">次の問題へ</button>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 地図ライブラリ Leaflet のJS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+  
+  <!-- ★ここが書き換えた部分：自分のJavaScriptファイルを読み込む -->
+  <script src="script.js"></script>
+</body>
+</html>
