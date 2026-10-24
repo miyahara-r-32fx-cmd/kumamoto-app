@@ -138,3 +138,4 @@ ptrArea.addEventListener('touchend', e => {
     ptrIndicator.style.transform = `translateY(0)`;
   }
 });
+
