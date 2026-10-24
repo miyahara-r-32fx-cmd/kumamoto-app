@@ -1,142 +1,252 @@
-// Lucideアイコンの初期化
-lucide.createIcons();
-
-// --- 1. オープニングアニメーション制御 ---
-window.addEventListener('DOMContentLoaded', () => {
-  // アニメーション完了（約2.5秒）を待ってブラーとローディング画面を消す
-  setTimeout(() => {
-    const splash = document.getElementById('splash-screen');
-    const appContainer = document.getElementById('app-container');
-    
-    splash.style.opacity = '0';
-    appContainer.classList.remove('blurred');
-    
-    // フェードアウト後に完全に非表示（操作の邪魔にならないように）
-    setTimeout(() => {
-      splash.style.display = 'none';
-      splash.style.pointerEvents = 'none';
-    }, 500);
-  }, 2500);
-});
-
-// --- 2. ハンバーガーメニュー制御 ---
-const menuBtn = document.getElementById('menu-btn');
-const navDrawer = document.getElementById('nav-drawer');
-const drawerScrim = document.getElementById('drawer-scrim');
-const menuItems = document.querySelectorAll('.menu-item');
-const views = document.querySelectorAll('.view');
-
-function toggleDrawer() {
-  navDrawer.classList.toggle('open');
-  drawerScrim.classList.toggle('visible');
+/* ベース設定 */
+:root {
+  --md-sys-color-primary: #00639b;
+  --md-sys-color-on-primary: #ffffff;
+  --md-sys-color-primary-container: #ceeaef;
+  --md-sys-color-surface: #f8f9ff;
+  --md-sys-color-on-surface: #191c20;
+  --md-sys-color-surface-variant: #e1e2ec;
+  --md-sys-color-outline: #74777f;
+  --md-radius-large: 16px;
+  --md-radius-full: 9999px;
 }
-menuBtn.addEventListener('click', toggleDrawer);
-drawerScrim.addEventListener('click', toggleDrawer);
 
-// タブ(画面)切り替え
-menuItems.forEach(item => {
-  item.addEventListener('click', (e) => {
-    // アクティブ状態の切り替え
-    menuItems.forEach(m => m.classList.remove('active'));
-    e.currentTarget.classList.add('active');
-    
-    // 画面の切り替え
-    const targetId = e.currentTarget.getAttribute('data-target');
-    views.forEach(v => v.classList.remove('active-view'));
-    document.getElementById(targetId).classList.add('active-view');
-    
-    // メニューを閉じる
-    toggleDrawer();
-    
-    // マップ表示の場合、サイズ再計算 (Leaflet特有のバグ対策)
-    if(targetId === 'map-view' && map) {
-      setTimeout(() => map.invalidateSize(), 300);
-    }
-  });
-});
-
-// --- 3. ボトムシート (ピン詳細 UI) ---
-const bottomSheet = document.getElementById('bottom-sheet');
-const sheetScrim = document.getElementById('sheet-scrim');
-const closeSheetBtn = document.getElementById('close-sheet-btn');
-
-function openSheet(title, desc) {
-  document.getElementById('sheet-title').textContent = title;
-  document.getElementById('sheet-desc').textContent = desc;
-  bottomSheet.classList.add('open');
-  sheetScrim.classList.add('visible');
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Noto Sans JP', sans-serif;
+  -webkit-tap-highlight-color: transparent;
 }
-function closeSheet() {
-  bottomSheet.classList.remove('open');
-  sheetScrim.classList.remove('visible');
+
+body, html {
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  background-color: var(--md-sys-color-surface);
+  color: var(--md-sys-color-on-surface);
 }
-closeSheetBtn.addEventListener('click', closeSheet);
-sheetScrim.addEventListener('click', closeSheet);
 
-// --- 4. Leaflet マップ初期化 ---
-const map = L.map('map', { zoomControl: false }).setView([32.803, 130.707], 13);
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution: '© OpenStreetMap contributors'
-}).addTo(map);
-// M3風のズームボタンを右下に配置
-L.control.zoom({ position: 'bottomright' }).addTo(map);
+/* スプラッシュ画面 */
+#splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background-color: var(--md-sys-color-primary-container);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: opacity 0.6s ease, visibility 0.6s;
+}
 
-// サンプルピン (タップでボトムシート展開)
-const marker = L.marker([32.803, 130.707]).addTo(map);
-marker.on('click', () => {
-  openSheet("事故多発地点", "ここは夕方に見通しが悪くなり、自転車と歩行者の接触事故が多発しています。十分スピードを落としてください。");
-});
+#splash-screen.fade-out {
+  opacity: 0;
+  visibility: hidden;
+}
 
-// --- 5. アコーディオン (交通ルール) ---
-document.querySelectorAll('.accordion-header').forEach(button => {
-  button.addEventListener('click', () => {
-    const item = button.parentElement;
-    item.classList.toggle('active');
-  });
-});
+.splash-content {
+  text-align: center;
+}
 
-// --- 6. Pull-to-Refresh (引っ張って更新) ---
-const ptrArea = document.getElementById('ptr-area');
-const ptrIndicator = document.getElementById('ptr-indicator');
-let startY = 0;
-let isPulling = false;
+.splash-pin {
+  width: 64px;
+  height: 64px;
+  color: var(--md-sys-color-primary);
+  animation: bounce 1.2s infinite alternate cubic-bezier(0.5, 0.05, 0.1, 0.3);
+}
 
-ptrArea.addEventListener('touchstart', e => {
-  if (ptrArea.scrollTop === 0) {
-    startY = e.touches[0].clientY;
-    isPulling = true;
-  }
-}, { passive: true });
+.kinetic-text {
+  display: flex;
+  gap: 2px;
+  margin-top: 16px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--md-sys-color-primary);
+}
 
-ptrArea.addEventListener('touchmove', e => {
-  if (!isPulling) return;
-  const y = e.touches[0].clientY;
-  const deltaY = y - startY;
-  // 下に引っ張る挙動
-  if (deltaY > 0 && deltaY < 120) {
-    ptrIndicator.style.transform = `translateY(${deltaY}px)`;
-  }
-}, { passive: true });
+.kinetic-text span {
+  display: inline-block;
+  animation: wave 1.5s infinite ease-in-out;
+}
 
-ptrArea.addEventListener('touchend', e => {
-  if (!isPulling) return;
-  isPulling = false;
-  const y = e.changedTouches[0].clientY;
-  const deltaY = y - startY;
-  
-  if (deltaY > 60) {
-    // 更新処理を疑似的に実行
-    ptrIndicator.style.transform = `translateY(60px)`;
-    setTimeout(() => {
-      // 完了したら戻す
-      ptrIndicator.style.transform = `translateY(0)`;
-      // ここにデータ再読み込み処理を書く (今回は簡易的に画面をフラッシュ)
-      document.getElementById('map').style.opacity = 0.5;
-      setTimeout(() => document.getElementById('map').style.opacity = 1, 300);
-    }, 1500);
-  } else {
-    ptrIndicator.style.transform = `translateY(0)`;
-  }
-});
+.kinetic-text span:nth-child(2) { animation-delay: 0.1s; }
+.kinetic-text span:nth-child(3) { animation-delay: 0.2s; }
+.kinetic-text span:nth-child(4) { animation-delay: 0.3s; }
+.kinetic-text span:nth-child(5) { animation-delay: 0.4s; }
+.kinetic-text span:nth-child(6) { animation-delay: 0.5s; }
+.kinetic-text span:nth-child(7) { animation-delay: 0.6s; }
 
+@keyframes bounce {
+  from { transform: translateY(0); }
+  to { transform: translateY(-24px); }
+}
 
+@keyframes wave {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* メインアプリ構造 */
+#app-container {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  transition: filter 0.5s ease;
+}
+
+#app-container.blurred {
+  filter: blur(8px);
+}
+
+/* App Bar */
+.md3-app-bar {
+  height: 64px;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: var(--md-sys-color-surface);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.app-title {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.icon-btn {
+  background: none;
+  border: none;
+  width: 40px;
+  height: 40px;
+  border-radius: var(--md-radius-full);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  color: var(--md-sys-color-on-surface);
+}
+
+.icon-btn.filled-tonal {
+  background-color: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-primary);
+}
+
+/* マップ */
+.main-content {
+  flex: 1;
+  position: relative;
+}
+
+#map {
+  width: 100%;
+  height: 100%;
+}
+
+/* Pull to Refresh */
+.ptr-indicator {
+  position: absolute;
+  top: -50px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--md-sys-color-surface);
+  padding: 8px 16px;
+  border-radius: var(--md-radius-full);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  z-index: 1001;
+  transition: transform 0.2s ease;
+}
+
+.spin-icon {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  100% { transform: rotate(360deg); }
+}
+
+/* ボトムシート */
+.bottom-sheet {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: var(--md-sys-color-surface);
+  border-top-left-radius: 28px;
+  border-top-right-radius: 28px;
+  padding: 16px 24px 32px;
+  box-shadow: 0 -4px 16px rgba(0,0,0,0.15);
+  z-index: 2000;
+  transform: translateY(100%);
+  transition: transform 0.3s cubic-bezier(0.1, 0.9, 0.2, 1);
+}
+
+.bottom-sheet.active {
+  transform: translateY(0);
+}
+
+.sheet-handle {
+  width: 32px;
+  height: 4px;
+  background: var(--md-sys-color-outline);
+  border-radius: 2px;
+  margin: 0 auto 16px;
+  opacity: 0.4;
+}
+
+.sheet-desc {
+  font-size: 0.85rem;
+  color: var(--md-sys-color-outline);
+  margin-top: 4px;
+  margin-bottom: 16px;
+}
+
+.input-group {
+  margin-bottom: 12px;
+}
+
+.input-group label {
+  display: block;
+  font-size: 0.8rem;
+  font-weight: 500;
+  margin-bottom: 4px;
+}
+
+.m3-input {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 8px;
+  background: transparent;
+  font-size: 0.95rem;
+}
+
+.sheet-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.m3-btn {
+  padding: 10px 20px;
+  border-radius: var(--md-radius-full);
+  border: none;
+  font-weight: 500;
+  cursor: pointer;
+}
+
+.text-btn {
+  background: transparent;
+  color: var(--md-sys-color-primary);
+}
+
+.filled-btn {
+  background: var(--md-sys-color-primary);
+  color: var(--md-sys-color-on-primary);
+}
