@@ -134,10 +134,11 @@ body, html {
   color: var(--md-sys-color-primary);
 }
 
-/* マップ */
+/* マップ領域（枠外の更新マークを隠す設定を追加） */
 .main-content {
   flex: 1;
   position: relative;
+  overflow: hidden; /* ←ここを追加して枠外のインジケーターを非表示にします */
 }
 
 #map {
@@ -148,7 +149,7 @@ body, html {
 /* Pull to Refresh */
 .ptr-indicator {
   position: absolute;
-  top: -50px;
+  top: -60px;
   left: 50%;
   transform: translateX(-50%);
   background: var(--md-sys-color-surface);
@@ -158,7 +159,7 @@ body, html {
   display: flex;
   align-items: center;
   gap: 8px;
-  z-index: 1001;
+  z-index: 500; /* ←ヘッダー(1000)の後ろに隠れるよう数値を下げました */
   transition: transform 0.2s ease;
 }
 
