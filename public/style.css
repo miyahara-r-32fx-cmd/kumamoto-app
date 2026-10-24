@@ -7,6 +7,8 @@
   --md-sys-color-on-surface: #191c20;
   --md-sys-color-surface-variant: #e1e2ec;
   --md-sys-color-outline: #74777f;
+  --md-sys-color-correct: #2e7d32;
+  --md-sys-color-wrong: #c62828;
   --md-radius-large: 16px;
   --md-radius-full: 9999px;
 }
@@ -134,11 +136,11 @@ body, html {
   color: var(--md-sys-color-primary);
 }
 
-/* マップ領域（枠外の更新マークを隠す設定を追加） */
+/* マップ領域 */
 .main-content {
   flex: 1;
   position: relative;
-  overflow: hidden; /* ←ここを追加して枠外のインジケーターを非表示にします */
+  overflow: hidden;
 }
 
 #map {
@@ -159,7 +161,7 @@ body, html {
   display: flex;
   align-items: center;
   gap: 8px;
-  z-index: 500; /* ←ヘッダー(1000)の後ろに隠れるよう数値を下げました */
+  z-index: 500;
   transition: transform 0.2s ease;
 }
 
@@ -240,6 +242,7 @@ body, html {
   border: none;
   font-weight: 500;
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 .text-btn {
@@ -250,4 +253,108 @@ body, html {
 .filled-btn {
   background: var(--md-sys-color-primary);
   color: var(--md-sys-color-on-primary);
+}
+
+.full-width {
+  width: 100%;
+}
+
+/* クイズモーダル */
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  z-index: 3000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  opacity: 1;
+  transition: opacity 0.3s ease;
+}
+
+.modal-overlay.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.modal-card {
+  background: var(--md-sys-color-surface);
+  width: 100%;
+  max-width: 440px;
+  border-radius: 28px;
+  padding: 24px;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.modal-header h2 {
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--md-sys-color-primary);
+}
+
+.quiz-badge {
+  display: inline-block;
+  background: var(--md-sys-color-primary-container);
+  color: var(--md-sys-color-primary);
+  padding: 4px 12px;
+  border-radius: var(--md-radius-full);
+  font-size: 0.8rem;
+  font-weight: 700;
+  margin-bottom: 12px;
+}
+
+.quiz-question {
+  font-size: 1.05rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+.quiz-options {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.option-btn {
+  width: 100%;
+  padding: 14px;
+  border: 1px solid var(--md-sys-color-outline);
+  border-radius: 12px;
+  background: transparent;
+  font-size: 0.95rem;
+  text-align: left;
+  cursor: pointer;
+}
+
+.quiz-result {
+  margin-top: 20px;
+  padding-top: 16px;
+  border-top: 1px solid var(--md-sys-color-surface-variant);
+}
+
+.result-status {
+  font-size: 1.2rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.result-status.correct { color: var(--md-sys-color-correct); }
+.result-status.wrong { color: var(--md-sys-color-wrong); }
+
+.result-explanation {
+  font-size: 0.9rem;
+  color: var(--md-sys-color-on-surface);
+  margin-bottom: 16px;
+  line-height: 1.5;
 }

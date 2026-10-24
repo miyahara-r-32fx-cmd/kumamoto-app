@@ -6,13 +6,13 @@
   <title>くまもと交通安全ポータル</title>
   <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- Google Fonts (Material 3風のフォント) -->
+  <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-  <!-- 【1】スプラッシュ画面（オープニングアニメーション） -->
+  <!-- 【1】スプラッシュ画面 -->
   <div id="splash-screen">
     <div class="splash-content">
       <i data-lucide="map-pin" class="splash-pin"></i>
@@ -25,16 +25,15 @@
   <!-- 【2】メインアプリ領域 -->
   <div id="app-container" class="blurred">
     
-    <!-- Material 3 App Bar（上部バー） -->
+    <!-- App Bar -->
     <header class="md3-app-bar">
-      <button id="menu-btn" class="icon-btn"><i data-lucide="menu"></i></button>
+      <button id="menu-btn" class="icon-btn"><i data-lucide="help-circle"></i></button>
       <h1 class="app-title">自転車危険マップ</h1>
       <button id="add-btn" class="icon-btn filled-tonal"><i data-lucide="plus"></i></button>
     </header>
 
     <!-- メインコンテンツ（地図） -->
     <main class="main-content">
-      <!-- プル・トゥ・リフレッシュの表示エリア -->
       <div id="ptr-indicator" class="ptr-indicator">
         <i data-lucide="refresh-cw" class="spin-icon"></i>
         <span>更新中...</span>
@@ -70,11 +69,35 @@
       </div>
     </div>
 
+    <!-- 【4】交通安全クイズ用モーダル -->
+    <div id="quiz-modal" class="modal-overlay hidden">
+      <div class="modal-card">
+        <div class="modal-header">
+          <h2><i data-lucide="award"></i> 自転車ルールクイズ</h2>
+          <button id="close-quiz" class="icon-btn"><i data-lucide="x"></i></button>
+        </div>
+        
+        <div id="quiz-body" class="quiz-body">
+          <div class="quiz-badge" id="quiz-number">第 1 問</div>
+          <p id="quiz-question" class="quiz-question">問題文がここに入ります</p>
+          
+          <div id="quiz-options" class="quiz-options">
+            <!-- 選択肢がJavaScriptで自動追加されます -->
+          </div>
+
+          <div id="quiz-result" class="quiz-result hidden">
+            <div id="result-status" class="result-status"></div>
+            <p id="result-explanation" class="result-explanation"></p>
+            <button id="next-quiz-btn" class="m3-btn filled-btn full-width">次の問題へ</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
   </div>
 
-  <!-- Lucide Icons -->
+  <!-- Scripts -->
   <script src="https://unpkg.com/lucide@latest"></script>
-  <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
   <script src="script.js"></script>
 </body>
