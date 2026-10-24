@@ -2,88 +2,118 @@
 <html lang="ja">
 <head>
   <meta charset="UTF-8">
-  <!-- スマホでも綺麗に表示するための設定 -->
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  
-  <!-- 地図ライブラリ Leaflet のCSS -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>くまもと交通安全ポータル</title>
+  <!-- Leaflet CSS -->
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  
-  <!-- ★ここが書き換えた部分：自分のCSSファイルを読み込む -->
+  <!-- Google Fonts (Material 3風のフォント) -->
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <div class="app-container">
-    <header class="header">
-      <div class="header-logo">
-        <h1>🚲 熊本市 自転車危険マップ</h1>
-        <p>〜みんなでつくる安全な通学・サイクリングのために〜</p>
+
+  <!-- 【1】スプラッシュ画面 (オープニングアニメーション) -->
+  <div id="splash-screen">
+    <div class="splash-content">
+      <i data-lucide="map-pin" class="splash-pin"></i>
+      <div class="kinetic-text">
+        <span>く</span><span>ま</span><span>も</span><span>と</span><span>交</span><span>通</span><span>安</span><span>全</span><span>ポ</span><span>ー</span><span>タ</span><span>ル</span>
       </div>
-      <nav class="header-nav">
-        <button class="tab-btn active" data-target="map-tab">マップ</button>
-        <button class="tab-btn" data-target="rule-tab">交通ルール</button>
-        <button class="tab-btn" data-target="quiz-tab">クイズ</button>
-      </nav>
+    </div>
+  </div>
+
+  <!-- 【2】メインアプリ領域 (最初はブラーがかかっている) -->
+  <div id="app-container" class="blurred">
+    
+    <!-- Material 3 App Bar (上部バー) -->
+    <header class="md3-app-bar">
+      <button id="menu-btn" class="icon-btn"><i data-lucide="menu"></i></button>
+      <h1 class="app-title">自転車危険マップ</h1>
+      <button id="add-btn" class="icon-btn filled-tonal"><i data-lucide="plus"></i></button>
     </header>
 
-    <main class="main-content">
-      <!-- マップ タブ -->
-      <section id="map-tab" class="tab-section active-display active-animate">
-        <div class="map-layout">
-          <div class="sidebar-left">
-            <h3>危険箇所を投稿</h3>
-            <div id="post-form-area" class="post-form hidden">
-              <label>危険の種類</label>
-              <select id="danger-type">
-                <option value="事故多発地点">事故多発地点</option>
-                <option value="見通しが悪い">見通しが悪い</option>
-              </select>
-              <label>詳細・理由</label>
-              <textarea id="danger-desc" rows="3"></textarea>
-              <button id="btn-submit" class="primary-btn">ピンを立てる</button>
-              <button id="btn-cancel" class="secondary-btn">キャンセル</button>
-            </div>
-            <p id="post-guide">マップ上の危険だと思う場所をクリックしてください。</p>
-          </div>
-          <div class="map-center"><div id="map"></div></div>
-          <div class="sidebar-right">
-            <h3>地点の詳細</h3>
-            <div id="point-detail-area">
-              <p class="placeholder-text">ピンをクリックすると詳細が表示されます。</p>
-            </div>
-          </div>
-        </div>
+    <!-- ハンバーガーメニュー (Navigation Drawer) -->
+    <nav id="nav-drawer" class="drawer">
+      <div class="drawer-header">
+        <h2 class="drawer-title">メニュー</h2>
+      </div>
+      <ul class="drawer-menu">
+        <li><button class="menu-item active" data-target="map-view"><i data-lucide="map"></i> マップ</button></li>
+        <li><button class="menu-item" data-target="rules-view"><i data-lucide="book-open"></i> 交通ルール</button></li>
+      </ul>
+    </nav>
+    <div id="drawer-scrim" class="scrim"></div>
+
+    <!-- メインコンテンツ (Pull-to-Refreshエリア) -->
+    <main id="ptr-area">
+      <div id="ptr-indicator">
+        <i data-lucide="refresh-cw" class="spinner"></i>
+        <span>マップを更新中...</span>
+      </div>
+      
+      <!-- マップ画面 -->
+      <section id="map-view" class="view active-view">
+        <div id="map"></div>
       </section>
 
-      <!-- 交通ルール タブ -->
-      <section id="rule-tab" class="tab-section">
-        <div class="content-wrapper">
-          <h2>知っておきたい交通ルール</h2>
-          <p>自転車は原則「車道の左側」を通行するなど、安全なルールを守りましょう。</p>
-        </div>
-      </section>
-
-      <!-- クイズ タブ -->
-      <section id="quiz-tab" class="tab-section">
-        <div class="content-wrapper">
-          <h2>交通安全クイズに挑戦！</h2>
-          <div id="quiz-container" class="quiz-box">
-            <p id="quiz-question" class="quiz-question">問題文がここに表示されます</p>
-            <div id="quiz-choices" class="quiz-choices"></div>
-            <div id="quiz-result" class="quiz-result hidden">
-              <h3 id="quiz-judgement"></h3>
-              <p id="quiz-explanation"></p>
-              <button id="btn-next-quiz" class="primary-btn">次の問題へ</button>
+      <!-- 交通ルール画面 (アコーディオン) -->
+      <section id="rules-view" class="view">
+        <div class="content-padding">
+          <h2 class="section-title">交通ルールを確認しよう</h2>
+          <div class="accordion">
+            <div class="accordion-item">
+              <button class="accordion-header">
+                <span>自転車は車道が原則</span>
+                <i data-lucide="chevron-down" class="chevron"></i>
+              </button>
+              <div class="accordion-content">
+                <p>道路交通法上、自転車は軽車両と位置付けられています。歩道と車道の区別があるところは車道通行が原則です。</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">
+                <span>車道は左側を通行</span>
+                <i data-lucide="chevron-down" class="chevron"></i>
+              </button>
+              <div class="accordion-content">
+                <p>自転車は、道路の左端に寄って通行しなければなりません。右側通行は大変危険です。</p>
+              </div>
+            </div>
+            <div class="accordion-item">
+              <button class="accordion-header">
+                <span>夜間はライトを点灯</span>
+                <i data-lucide="chevron-down" class="chevron"></i>
+              </button>
+              <div class="accordion-content">
+                <p>夜間は必ずライトを点け、反射材を備えた自転車に乗りましょう。</p>
+              </div>
             </div>
           </div>
         </div>
       </section>
     </main>
+
+    <!-- ボトムシート (詳細表示UI) -->
+    <div id="bottom-sheet" class="bottom-sheet">
+      <div class="sheet-handle-container">
+        <div class="sheet-handle"></div>
+      </div>
+      <div class="sheet-content">
+        <div class="sheet-header">
+          <div class="sheet-icon"><i data-lucide="alert-triangle"></i></div>
+          <h3 id="sheet-title">危険地点</h3>
+        </div>
+        <p id="sheet-desc">ピンの詳細情報がここに表示されます。周囲の見通しや事故多発などの具体的な内容です。</p>
+        <button id="close-sheet-btn" class="md3-btn primary-btn">閉じる</button>
+      </div>
+    </div>
+    <div id="sheet-scrim" class="scrim"></div>
+
   </div>
 
-  <!-- 地図ライブラリ Leaflet のJS -->
+  <!-- スクリプトの読み込み -->
+  <script src="https://unpkg.com/lucide@latest"></script>
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  
-  <!-- ★ここが書き換えた部分：自分のJavaScriptファイルを読み込む -->
   <script src="script.js"></script>
 </body>
 </html>
