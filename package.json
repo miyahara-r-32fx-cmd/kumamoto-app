@@ -1,12 +1,15 @@
 {
-  "name": "kumamoto-traffic-app",
+  "name": "kumamoto-app",
   "version": "1.0.0",
-  "description": "熊本交通マップ",
+  "description": "くまもと交通安全ポータル｜自転車危険マップ（GitHub + Render 版）",
   "main": "server.js",
+  "private": true,
   "scripts": {
-    "start": "node server.js"
+    "start": "node server.js",
+    "dev": "node --watch server.js",
+    "seed": "node server.js --seed"
   },
-  "dependencies": {
-    "express": "^4.18.2"
+  "engines": {
+    "node": ">=18"
   }
 }
