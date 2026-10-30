@@ -1,1 +1,9 @@
-
+# 自動で作られるもの・公開してはいけないもの
+node_modules/
+data/
+.env
+*.log
+.DS_Store
+# サービスアカウントのキー（絶対に GitHub に上げない）
+*service-account*.json
+*-key.json
