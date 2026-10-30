@@ -1,16 +1,6 @@
 <!DOCTYPE html>
 <html lang="ja">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-  <title>くまもと交通安全ポータル</title>
-  <!-- Leaflet CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="style.css"><!DOCTYPE html>
-<html lang="ja">
-<head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
 <meta name="theme-color" content="#0061A4">
@@ -442,98 +432,5 @@
 
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="script.js"></script>
-</body>
-</html>
-</head>
-<body>
-
-  <!-- 【1】スプラッシュ画面 -->
-  <div id="splash-screen">
-    <div class="splash-content">
-      <i data-lucide="map-pin" class="splash-pin"></i>
-      <div class="kinetic-text">
-        <span>く</span><span>ま</span><span>も</span><span>と</span><span>交</span><span>通</span><span>安</span><span>全</span><span>ポ</span><span>ー</span><span>タ</span><span>ル</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- 【2】メインアプリ領域 -->
-  <div id="app-container" class="blurred">
-    
-    <!-- App Bar -->
-    <header class="md3-app-bar">
-      <button id="menu-btn" class="icon-btn"><i data-lucide="help-circle"></i></button>
-      <h1 class="app-title">自転車危険マップ</h1>
-      <button id="add-btn" class="icon-btn filled-tonal"><i data-lucide="plus"></i></button>
-    </header>
-
-    <!-- メインコンテンツ（地図） -->
-    <main class="main-content">
-      <div id="ptr-indicator" class="ptr-indicator">
-        <i data-lucide="refresh-cw" class="spin-icon"></i>
-        <span>更新中...</span>
-      </div>
-      
-      <div id="map"></div>
-    </main>
-
-    <!-- 【3】ピン投稿用ボトムシート -->
-    <div id="pin-bottom-sheet" class="bottom-sheet hidden">
-      <div class="sheet-handle"></div>
-      <h3>危険箇所を投稿</h3>
-      <p class="sheet-desc">地図をタップしてピンを置き、詳細を入力してください。</p>
-      
-      <div class="input-group">
-        <label>危険の種類</label>
-        <select id="danger-type" class="m3-input">
-          <option value="事故多発">事故多発地点</option>
-          <option value="見通し不良">見通しが悪い</option>
-          <option value="路面悪化">路面が悪い</option>
-          <option value="その他">その他</option>
-        </select>
-      </div>
-
-      <div class="input-group">
-        <label>詳細・理由</label>
-        <textarea id="danger-reason" class="m3-input" rows="3" placeholder="例: 夜間にライトが見えにくい交差点です"></textarea>
-      </div>
-
-      <div class="sheet-actions">
-        <button id="cancel-pin" class="m3-btn text-btn">キャンセル</button>
-        <button id="submit-pin" class="m3-btn filled-btn">ピンを立てる</button>
-      </div>
-    </div>
-
-    <!-- 【4】交通安全クイズ用モーダル -->
-    <div id="quiz-modal" class="modal-overlay hidden">
-      <div class="modal-card">
-        <div class="modal-header">
-          <h2><i data-lucide="award"></i> 自転車ルールクイズ</h2>
-          <button id="close-quiz" class="icon-btn"><i data-lucide="x"></i></button>
-        </div>
-        
-        <div id="quiz-body" class="quiz-body">
-          <div class="quiz-badge" id="quiz-number">第 1 問</div>
-          <p id="quiz-question" class="quiz-question">問題文がここに入ります</p>
-          
-          <div id="quiz-options" class="quiz-options">
-            <!-- 選択肢がJavaScriptで自動追加されます -->
-          </div>
-
-          <div id="quiz-result" class="quiz-result hidden">
-            <div id="result-status" class="result-status"></div>
-            <p id="result-explanation" class="result-explanation"></p>
-            <button id="next-quiz-btn" class="m3-btn filled-btn full-width">次の問題へ</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-  </div>
-
-  <!-- Scripts -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-  <script src="script.js"></script>
 </body>
 </html>
